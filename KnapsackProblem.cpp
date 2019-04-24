@@ -38,8 +38,8 @@ template <class T> double KnapsackProblem<T>::dCalculateFitness(std::vector<T> &
 	for (int ii = 0; ii < i_itemsNumber; ii++)
 	{
 
-		d_value += vGenotype.at(ii) * (pv_items->at(ii)).dGetValue();
-		d_usedSpace += vGenotype.at(ii) * (pv_items->at(ii)).dGetSize();
+		d_value += vGenotype.at(ii) * (pv_items->at(ii)).getValue();
+		d_usedSpace += vGenotype.at(ii) * (pv_items->at(ii)).getSize();
 
 	}
 	if (d_usedSpace > d_knapsackSize)

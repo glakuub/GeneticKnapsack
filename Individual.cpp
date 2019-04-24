@@ -61,7 +61,7 @@ template <> void Individual<int>::vCreateGenotype(std::vector<Item>* pvItems)
 
 		for (int ii = 0; ii < i_genotypeSize; ii++)
 		{	
-			std::uniform_int_distribution<>c_intDistribution(0, pvItems->at(ii).dHowManyCanGet());
+			std::uniform_int_distribution<>c_intDistribution(0, pvItems->at(ii).howManyCanGet());
 			int i_gene = c_intDistribution(c_randomGenerator);
 			genotype.push_back(i_gene);
 		}
@@ -75,7 +75,7 @@ template <> void Individual<double>::vCreateGenotype(std::vector<Item>* pvItems)
 
 		for (int ii = 0; ii < i_genotypeSize; ii++)
 		{	
-			std::uniform_real_distribution<>c_realDistribution(0, pvItems->at(ii).dHowManyCanGet());
+			std::uniform_real_distribution<>c_realDistribution(0, pvItems->at(ii).howManyCanGet());
 			double d_gene = c_realDistribution(c_randomGenerator);
 			genotype.push_back(d_gene);
 		}
@@ -167,7 +167,7 @@ template <> void Individual<int>::vMutate()
 		{	
 			if (dGetRandomProbability() < d_mutationProbalility)
 			{
-				int d_howMany = v_itemsVector->at(ii).dHowManyCanGet();
+				int d_howMany = v_itemsVector->at(ii).howManyCanGet();
 				int d_mutationRange = d_howMany / 2;
 
 				std::uniform_int_distribution<> c_mutationValue(-d_mutationRange, d_mutationRange);
@@ -182,7 +182,7 @@ template <> void Individual<int>::vMutate()
 				}
 
 			}
-			genotype.at(ii) = v_itemsVector->at(ii).dHowManyCanGet() - genotype.at(ii);
+			genotype.at(ii) = v_itemsVector->at(ii).howManyCanGet() - genotype.at(ii);
 		}
 	}
 	/*
@@ -211,7 +211,7 @@ template <> void Individual<double>::vMutate()
 	{
 		if (dGetRandomProbability() < d_mutationProbalility)
 		{	
-			double d_howMany = v_itemsVector->at(ii).dHowManyCanGet();
+			double d_howMany = v_itemsVector->at(ii).howManyCanGet();
 			double d_mutationRange = d_howMany/10.0;
 
 			std::uniform_real_distribution<> c_mutationValue(-d_mutationRange, d_mutationRange);
