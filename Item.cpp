@@ -2,15 +2,10 @@
 
 
 
-Item::Item(double dSize, double dValue, double dCanTakeNTimes) :size(dSize), value(dValue), canTakeNTimes(dCanTakeNTimes)
-{
+Item::Item(double dSize, double dValue, double dCanTakeNTimes) :size(dSize), value(dValue), canTakeNTimes(dCanTakeNTimes){}
 
-}
+Item::~Item()=default;
 
-
-Item::~Item()
-{
-}
 double Item::getSize()
 {
 	return size;

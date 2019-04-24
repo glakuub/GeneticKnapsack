@@ -15,33 +15,33 @@ public:
 	Individual(const Individual& cOther);
 	~Individual();
 
-	void vCalculateFittness(KnapsackProblem<T> * pcProblem);
-	void vTryToMutate();
-	void vShowGenotype();
-	void vCreateGenotype();
-	void vCreateGenotype(std::vector<Item>* pvItems);
-	double dGetFittness(); 
-	std::vector<T> & vGetGenotype();
+	void calculateFittness(KnapsackProblem<T> *knapsackProblem);
+	void tryToMutate();
+	void showGenotype();
+	void createGenotype();
+	void createGenotype(std::vector<Item> *pvItems);
+	double getFittness();
+	std::vector<T> & getGenotype();
 	Individual<T> & operator++();
 	Individual<T> & operator++(int);
-	Individual<T>  operator+(const Individual<T> & cOther);
+	Individual<T>  operator+(const Individual<T> & other);
 
 
 private:
-	double dGetRandomProbability();
-	int iGetCuttingPoint();
-	void vMutate();
+	double getRandomProbability();
+	int getCuttingPoint();
+	void mutate();
 
-	std::vector<T> genotype;
-	std::vector<Item> * v_itemsVector;
-	int i_genotypeSize;
-	double d_fittness;
-	double d_mutationProbalility;
-	double d_crossingProbability;
-	std::random_device c_randomDevice;
-	std::mt19937  c_randomGenerator;
-	std::uniform_real_distribution<>c_realDistribution;
-	std::uniform_int_distribution<>c_intDistribution;
+	std::vector<T> genotypeVector;
+	std::vector<Item> * itemsVector;
+	int genotypeSize;
+	double fittness;
+	double mutationProbalility;
+	double crossingProbability;
+	std::random_device randomDevice;
+	std::mt19937  randomGenerator;
+	std::uniform_real_distribution<> realDistribution;
+	std::uniform_int_distribution<> intDistribution;
 
 	
 

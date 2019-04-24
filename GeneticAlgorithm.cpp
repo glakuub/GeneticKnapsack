@@ -2,138 +2,139 @@
 
 
 
-template <class T> GeneticAlgorithm<T>::GeneticAlgorithm() :c_randomGenerator(c_randomDevice()), c_realDistribution(0,1)
+template <class T> GeneticAlgorithm<T>::GeneticAlgorithm() :randomGenerator(randomDevice()), realDistribution(0,1)
 {
-	i_populationSize = 0;
-	d_crossingProbabilty = 0;
-	d_mutationProbability = 0;
-	pc_problem = nullptr;
-	pv_populationVector = nullptr;
-	c_bestIndividual = nullptr;
+	populationSize = 0;
+	crossingProbabilty = 0;
+	mutationProbability = 0;
+	knapsackProblem = nullptr;
+	populationVector = nullptr;
+	bestIndividual = nullptr;
 
 }
 
 template <class T> GeneticAlgorithm<T>::~GeneticAlgorithm()
-{	
-	vDeletePopulation();
+{
+    deletePopulation();
 	
 }
 
-template <class T> int GeneticAlgorithm<T>::iSetProperties(int iPopSize, double dCrossProb, double dMutProb, KnapsackProblem<T>* pcProblem)
+template <class T> int GeneticAlgorithm<T>::setParameters(int iPopSize, double dCrossProb, double dMutProb,
+                                                          KnapsackProblem<T> *pcProblem)
 {	
 	if (iPopSize < 1)return ERR_POP_SIZE_LESS_THAN_ONE;
-	i_populationSize = iPopSize;
-	c_intDistribution=std::uniform_int_distribution<>(0, iPopSize - 1);
+	populationSize = iPopSize;
+	intDistribution=std::uniform_int_distribution<>(0, iPopSize - 1);
 
 	if (1 < dCrossProb || dCrossProb < 0)return ERR_INCORRECT_CROSS_PROB;
-	d_crossingProbabilty = dCrossProb;
+	crossingProbabilty = dCrossProb;
 
 	if (1 < dMutProb || dMutProb < 0)return ERR_INCORRECT_MUT_PROB;
-	d_mutationProbability = dMutProb;
+	mutationProbability = dMutProb;
 	if (pcProblem == nullptr) return ERR_PROBLEM_POINTER_IS_NULL;
-	pc_problem = pcProblem;
+	knapsackProblem = pcProblem;
 	return 1;
 }
 
-template <> void GeneticAlgorithm<bool>::vCreatePopulation()
+template <> void GeneticAlgorithm<bool>::createPopulation()
 {	
 	
-	pv_populationVector = new std::vector<Individual<bool>*>();
-	for (int ii = 0; ii < i_populationSize; ii++)
+	populationVector = new std::vector<Individual<bool>*>();
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		pv_populationVector->push_back(new Individual<bool>(pc_problem->iGetItemsNumber(),pc_problem->pvGetItems(), d_mutationProbability, d_crossingProbabilty));
-		pv_populationVector->at(ii)->vCreateGenotype();
+		populationVector->push_back(new Individual<bool>(knapsackProblem->getItemsNumber(), knapsackProblem->getItemsVector(), mutationProbability, crossingProbabilty));
+        populationVector->at(ii)->createGenotype();
 	}
 }
 
-template <> void GeneticAlgorithm<int>::vCreatePopulation()
+template <> void GeneticAlgorithm<int>::createPopulation()
 {
 
-	pv_populationVector = new std::vector<Individual<int>*>();
-	for (int ii = 0; ii < i_populationSize; ii++)
+	populationVector = new std::vector<Individual<int>*>();
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		pv_populationVector->push_back(new Individual<int>(pc_problem->iGetItemsNumber(), pc_problem->pvGetItems(), d_mutationProbability, d_crossingProbabilty));
-		pv_populationVector->at(ii)->vCreateGenotype(pc_problem->pvGetItems());
+		populationVector->push_back(new Individual<int>(knapsackProblem->getItemsNumber(), knapsackProblem->getItemsVector(), mutationProbability, crossingProbabilty));
+        populationVector->at(ii)->createGenotype(knapsackProblem->getItemsVector());
 	}
 }
 
-template <> void GeneticAlgorithm<double>::vCreatePopulation()
+template <> void GeneticAlgorithm<double>::createPopulation()
 {
 
-	pv_populationVector = new std::vector<Individual<double>*>();
-	for (int ii = 0; ii < i_populationSize; ii++)
+	populationVector = new std::vector<Individual<double>*>();
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		pv_populationVector->push_back(new Individual<double>(pc_problem->iGetItemsNumber(), pc_problem->pvGetItems(), d_mutationProbability, d_crossingProbabilty));
-		pv_populationVector->at(ii)->vCreateGenotype(pc_problem->pvGetItems());
+		populationVector->push_back(new Individual<double>(knapsackProblem->getItemsNumber(), knapsackProblem->getItemsVector(), mutationProbability, crossingProbabilty));
+        populationVector->at(ii)->createGenotype(knapsackProblem->getItemsVector());
 	}
 }
 
-template <class T> void GeneticAlgorithm<T>::vShowPopulation()
+template <class T> void GeneticAlgorithm<T>::showPopulation()
 {
-	for (int ii = 0; ii < i_populationSize; ii++)
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		pv_populationVector->at(ii)->vShowGenotype();
-		std::cout<<"val: " << pv_populationVector->at(ii)->dGetFittness()<< std::endl;
+		populationVector->at(ii)->showGenotype();
+		std::cout<<"val: " << populationVector->at(ii)->getFittness()<< std::endl;
 	}
 }
 
-template <class T> void GeneticAlgorithm<T>::vRunIteration()
-{	
-	
-	vCalculatePopulationFittness();
-	vSaveBestFromPopulation();
-	vPerformCrossing();
-	vPerformMutation();
-	
-	
-	
-}
-
-template <class T> void GeneticAlgorithm<T>::vSaveBestFromPopulation()
+template <class T> void GeneticAlgorithm<T>::runIteration()
 {
-	Individual<T> * c_best = cGetBestIndividual();
-	if (c_bestIndividual == nullptr || c_best->dGetFittness() >= c_bestIndividual->dGetFittness())
+
+    calculatePopulationFittness();
+    saveBestFromPopulation();
+    performCrossing();
+    performMutation();
+	
+	
+	
+}
+
+template <class T> void GeneticAlgorithm<T>::saveBestFromPopulation()
+{
+	Individual<T> * c_best = getBestIndividual();
+	if (bestIndividual == nullptr || c_best->getFittness() >= bestIndividual->getFittness())
 	{
-		if (c_bestIndividual != nullptr)delete c_bestIndividual;
-		c_bestIndividual = new Individual<T>(*c_best);
+		if (bestIndividual != nullptr)delete bestIndividual;
+		bestIndividual = new Individual<T>(*c_best);
 	}
 }
 
-template <class T> Individual<T> * GeneticAlgorithm<T>::cGetBestIndividual()
+template <class T> Individual<T> * GeneticAlgorithm<T>::getBestIndividual()
 {
 	Individual<T> * pc_toReturn=nullptr;
 	
-	for (int ii = 0; ii < i_populationSize; ii++)
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		if (pc_toReturn == nullptr || pv_populationVector->at(ii)->dGetFittness() >= pc_toReturn->dGetFittness())
+		if (pc_toReturn == nullptr || populationVector->at(ii)->getFittness() >= pc_toReturn->getFittness())
 		{
-			pc_toReturn = pv_populationVector->at(ii);
+			pc_toReturn = populationVector->at(ii);
 			
 		}
 	}
 	return pc_toReturn;
 }
 
-template <class T> Individual<T> * GeneticAlgorithm<T>::cGetBestFromAllPopulations()
+template <class T> Individual<T> * GeneticAlgorithm<T>::getBestFromAllPopulations()
 {
-	return c_bestIndividual;
+	return bestIndividual;
 }
 
-template <class T> int GeneticAlgorithm<T>::iRunFor(int iSeconds)
+template <class T> int GeneticAlgorithm<T>::runFor(int iSeconds)
 {	
-	if (pc_problem != nullptr)
+	if (knapsackProblem != nullptr)
 	{
 		
 		if (iSeconds>0)
 		{	
 			std::clock_t begin = clock();
-			vCreatePopulation();
+            createPopulation();
 			while ((double(clock()-begin)/ CLOCKS_PER_SEC )<iSeconds)
 			{
-				vRunIteration();
+                runIteration();
 
 			}
-			vCalculatePopulationFittness();
+            calculatePopulationFittness();
 		}
 		else
 		{
@@ -151,55 +152,56 @@ template <class T> int GeneticAlgorithm<T>::iRunFor(int iSeconds)
 	
 }
 
-template <class T> void GeneticAlgorithm<T>::vCalculatePopulationFittness()
+template <class T> void GeneticAlgorithm<T>::calculatePopulationFittness()
 {
-	for (int ii = 0; ii < i_populationSize; ii++)
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		pv_populationVector->at(ii)->vCalculateFittness(pc_problem);
+		populationVector->at(ii)->calculateFittness(knapsackProblem);
 	}
 }
 
-template <class T> int GeneticAlgorithm<T>::iGetRandomIndividualNumber()
+template <class T> int GeneticAlgorithm<T>::getRandomIndividualNumber()
 {
-	return c_intDistribution(c_randomGenerator);
+	return intDistribution(randomGenerator);
 }
 
-template <class T> void GeneticAlgorithm<T>::vChooseParents(Individual<T>** pcParent1, Individual<T>** pcParent2)
+template <class T> void GeneticAlgorithm<T>::chooseParents(Individual<T> **pcParent1, Individual<T> **pcParent2)
 {
 	
-	int i_parent1Cand1 = iGetRandomIndividualNumber();
-	int i_parent1Cand2 = iGetRandomIndividualNumber();
+	int i_parent1Cand1 = getRandomIndividualNumber();
+	int i_parent1Cand2 = getRandomIndividualNumber();
 
-	int i_parent2Cand1 = iGetRandomIndividualNumber();
-	int i_parent2Cand2 = iGetRandomIndividualNumber();
+	int i_parent2Cand1 = getRandomIndividualNumber();
+	int i_parent2Cand2 = getRandomIndividualNumber();
 
-	if (pv_populationVector->at(i_parent1Cand1)->dGetFittness() >= pv_populationVector->at(i_parent1Cand2)->dGetFittness())
+	if (populationVector->at(i_parent1Cand1)->getFittness() >= populationVector->at(i_parent1Cand2)->getFittness())
 	{
-		*pcParent1 = pv_populationVector->at(i_parent1Cand1);
+		*pcParent1 = populationVector->at(i_parent1Cand1);
 	}
 	else
 	{
-		*pcParent1 = pv_populationVector->at(i_parent1Cand2);
+		*pcParent1 = populationVector->at(i_parent1Cand2);
 	}
 
-	if (pv_populationVector->at(i_parent2Cand1)->dGetFittness() >= pv_populationVector->at(i_parent2Cand2)->dGetFittness())
+	if (populationVector->at(i_parent2Cand1)->getFittness() >= populationVector->at(i_parent2Cand2)->getFittness())
 	{
-		*pcParent2 = pv_populationVector->at(i_parent2Cand1);
+		*pcParent2 = populationVector->at(i_parent2Cand1);
 	}
 	else
 	{
-		*pcParent2 = pv_populationVector->at(i_parent2Cand2);
+		*pcParent2 = populationVector->at(i_parent2Cand2);
 	}
 
 }
 
-template <class T> void GeneticAlgorithm<T>::vCrossAndAdd(Individual<T>* pcParent1, Individual<T>* pcParent2, std::vector<Individual<T>*>* pvNewPopVec)
+template <class T> void GeneticAlgorithm<T>::crossAndAdd(Individual<T> *pcParent1, Individual<T> *pcParent2,
+                                                         std::vector<Individual<T> *> *pvNewPopVec)
 {		
 
 	Individual<T> * pc_child1;
 	Individual<T> * pc_child2;
 
-	if (dGetRandomCrossProb() < d_crossingProbabilty)
+	if (getRandomCrossProb() < crossingProbabilty)
 	{
 		pc_child1 = new Individual<T>(*pcParent1 + *pcParent2);
 		pc_child2 = new Individual<T>(*pcParent1 + *pcParent2);
@@ -216,52 +218,52 @@ template <class T> void GeneticAlgorithm<T>::vCrossAndAdd(Individual<T>* pcParen
 		
 	}
 }
-template <class T> void GeneticAlgorithm<T>::vPerformCrossing()
+template <class T> void GeneticAlgorithm<T>::performCrossing()
 {
-	std::vector<Individual<T>*>* pv_newPopulationVector = new std::vector<Individual<T>*>;
+	auto newPopulationVector = new std::vector<Individual<T>*>;
 	
 
-	while (pv_newPopulationVector->size() < i_populationSize)
+	while (newPopulationVector->size() < populationSize)
 	{
 		Individual<T> * pc_parent1;
 		Individual<T> * pc_parent2;
-		
-		vChooseParents(&pc_parent1, &pc_parent2);
-		vCrossAndAdd(pc_parent1, pc_parent2, pv_newPopulationVector);
+
+        chooseParents(&pc_parent1, &pc_parent2);
+        crossAndAdd(pc_parent1, pc_parent2, newPopulationVector);
 	
 	}
 
-	for (int ii = 0; ii < i_populationSize; ii++)
+	for (int ii = 0; ii < populationSize; ii++)
 	{
-		delete pv_populationVector->at(ii);
+		delete populationVector->at(ii);
 	}
-	delete pv_populationVector;
-	pv_populationVector = pv_newPopulationVector;
-	pv_newPopulationVector = nullptr;
+	delete populationVector;
+	populationVector = newPopulationVector;
+	newPopulationVector = nullptr;
 
 }
-template <class T> void GeneticAlgorithm<T>::vPerformMutation()
+template <class T> void GeneticAlgorithm<T>::performMutation()
 {	
-	for (int ii = 0; ii < i_populationSize; ii++)
+	for (int ii = 0; ii < populationSize; ii++)
 	{	
-		(*pv_populationVector->at(ii))++;
+		(*populationVector->at(ii))++;
 	}
 }
 
-template <class T> double GeneticAlgorithm<T>::dGetRandomCrossProb()
+template <class T> double GeneticAlgorithm<T>::getRandomCrossProb()
 {	
 
-	return c_realDistribution(c_randomGenerator);
+	return realDistribution(randomGenerator);
 }
-template <class T> void GeneticAlgorithm<T>::vDeletePopulation()
+template <class T> void GeneticAlgorithm<T>::deletePopulation()
 {
-	if (pv_populationVector != nullptr)
+	if (populationVector != nullptr)
 	{
-		for (int ii = 0; ii < i_populationSize; ii++)
+		for (int ii = 0; ii < populationSize; ii++)
 		{
-			delete pv_populationVector->at(ii);
+			delete populationVector->at(ii);
 		}
-		delete pv_populationVector;
+		delete populationVector;
 	}
 }
 

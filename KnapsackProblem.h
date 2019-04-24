@@ -7,17 +7,17 @@ class KnapsackProblem
 public:
 	KnapsackProblem();
 	~KnapsackProblem();
-	int iSetProperties( double dKnapsackSize, int iItemsNumber, std::vector<Item>* pvItemsVector);
-	double dGetKnapsackSize();
-	double dCalculateFitness(std::vector<T> & vGenotype);
-	int iGetItemsNumber();
-	std::vector<Item>* pvGetItems();
+	int setParameters(double dKnapsackSize, int iItemsNumber, std::vector<Item> *pvItemsVector);
+	double getKnapsackSize();
+	double calculateFitness(std::vector<T> &vGenotype);
+	int getItemsNumber();
+	std::vector<Item>* getItemsVector();
 	
 	
 private:
 	
-	int i_itemsNumber;
-	double d_knapsackSize;
+	int itemsNumber;
+	double knapsackSize;
 	std::vector<Item>* pv_items;
 	static const int ERR_LESS_THAN_ONE_ITEM = -7;
 	static const int ERR_KNAPSACK_SIZE_ZERO_OR_LESS = -8;

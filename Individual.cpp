@@ -2,95 +2,95 @@
 
 
 
-template <class T> Individual<T>::Individual(int iGenotypeSize, std::vector<Item> * pcItems, double dMutProb, double dCrossProb) : c_randomGenerator(c_randomDevice()), c_realDistribution(0,1), c_intDistribution(0, iGenotypeSize -1)
+template <class T> Individual<T>::Individual(int iGenotypeSize, std::vector<Item> * pcItems, double dMutProb, double dCrossProb) : randomGenerator(randomDevice()), realDistribution(0,1), intDistribution(0, iGenotypeSize -1)
 {	
-	i_genotypeSize = iGenotypeSize;
-	d_fittness = 0;
-	v_itemsVector = pcItems;
-	d_crossingProbability = dCrossProb;
-	d_mutationProbalility = dMutProb;
+	genotypeSize = iGenotypeSize;
+	fittness = 0;
+	itemsVector = pcItems;
+	crossingProbability = dCrossProb;
+	mutationProbalility = dMutProb;
 }
-template <class T> Individual<T> ::Individual(const Individual& cOther) :c_randomGenerator(c_randomDevice()), c_realDistribution(0, 1), c_intDistribution(0, cOther.i_genotypeSize - 1)
+template <class T> Individual<T> ::Individual(const Individual& cOther) :randomGenerator(randomDevice()), realDistribution(0, 1), intDistribution(0, cOther.genotypeSize - 1)
 {	
-	v_itemsVector = cOther.v_itemsVector;
-	i_genotypeSize = cOther.i_genotypeSize;
-	d_fittness = cOther.d_fittness;
-	genotype = cOther.genotype;
-	d_crossingProbability = cOther.d_crossingProbability;
-	d_mutationProbalility = cOther.d_mutationProbalility;
+	itemsVector = cOther.itemsVector;
+	genotypeSize = cOther.genotypeSize;
+	fittness = cOther.fittness;
+	genotypeVector = cOther.genotypeVector;
+	crossingProbability = cOther.crossingProbability;
+	mutationProbalility = cOther.mutationProbalility;
 	
 }
-template <class T> std::vector<T>& Individual<T>::vGetGenotype()
+template <class T> std::vector<T>& Individual<T>::getGenotype()
 {
-	return genotype;
+	return genotypeVector;
 }
 template <class T> Individual<T>::~Individual()=default;
 
 template <class T>  Individual<T> & Individual<T>::operator++ ()
 {
-	vMutate();
+    mutate();
 	return *this;
 }
 template <class T>  Individual<T> & Individual<T>::operator++ (int)
 {
-	vMutate();
+    mutate();
 	return *this;
 }
-template <class T>  Individual<T> Individual<T>::operator+ (const Individual<T> & cOther)
+template <class T>  Individual<T> Individual<T>::operator+ (const Individual<T> & other)
 {
-	Individual<T>  pc_child(i_genotypeSize,v_itemsVector,d_mutationProbalility,d_crossingProbability);
+	Individual<T>  pc_child(genotypeSize,itemsVector,mutationProbalility,crossingProbability);
 
-	int i_cuttingPoint = iGetCuttingPoint();
+	int i_cuttingPoint = getCuttingPoint();
 	for (int ii = 0; ii < i_cuttingPoint; ii++)
 	{
-		pc_child.vGetGenotype().push_back(genotype.at(ii));
+        pc_child.getGenotype().push_back(genotypeVector.at(ii));
 		
 	}
-	for (int ii = i_cuttingPoint; ii < i_genotypeSize; ii++)
+	for (int ii = i_cuttingPoint; ii < genotypeSize; ii++)
 	{
-		pc_child.vGetGenotype().push_back(cOther.genotype.at(ii));
+        pc_child.getGenotype().push_back(other.genotypeVector.at(ii));
 	}
 	
 	return pc_child;
 }
-template <> void Individual<int>::vCreateGenotype(std::vector<Item>* pvItems)
+template <> void Individual<int>::createGenotype(std::vector<Item> *pvItems)
 {
-	if (genotype.empty())
+	if (genotypeVector.empty())
 	{	
 		
 
-		for (int ii = 0; ii < i_genotypeSize; ii++)
+		for (int ii = 0; ii < genotypeSize; ii++)
 		{	
 			std::uniform_int_distribution<>c_intDistribution(0, pvItems->at(ii).howManyCanGet());
-			int i_gene = c_intDistribution(c_randomGenerator);
-			genotype.push_back(i_gene);
+			int i_gene = c_intDistribution(randomGenerator);
+			genotypeVector.push_back(i_gene);
 		}
 	}
 }
-template <> void Individual<double>::vCreateGenotype(std::vector<Item>* pvItems)
+template <> void Individual<double>::createGenotype(std::vector<Item> *pvItems)
 {
-	if (genotype.empty())
+	if (genotypeVector.empty())
 	{	
 		
 
-		for (int ii = 0; ii < i_genotypeSize; ii++)
+		for (int ii = 0; ii < genotypeSize; ii++)
 		{	
 			std::uniform_real_distribution<>c_realDistribution(0, pvItems->at(ii).howManyCanGet());
-			double d_gene = c_realDistribution(c_randomGenerator);
-			genotype.push_back(d_gene);
+			double d_gene = c_realDistribution(randomGenerator);
+			genotypeVector.push_back(d_gene);
 		}
 	}
 }
-template<> void Individual<bool>::vCreateGenotype()
+template<> void Individual<bool>::createGenotype()
 {
-	if (genotype.empty())
+	if (genotypeVector.empty())
 	{	
 		
 		std::uniform_int_distribution<>c_intDistribution(0, 1);
-		for (int ii = 0; ii < i_genotypeSize; ii++)
+		for (int ii = 0; ii < genotypeSize; ii++)
 		{	
-			bool b_gene = c_intDistribution(c_randomGenerator);
-			genotype.push_back(b_gene);
+			bool b_gene = c_intDistribution(randomGenerator);
+			genotypeVector.push_back(b_gene);
 		}
 	}
 }
@@ -98,45 +98,45 @@ template<> void Individual<bool>::vCreateGenotype()
 
 
 
-template <class T> void Individual<T>::vShowGenotype()
+template <class T> void Individual<T>::showGenotype()
 {	
 
-	if (!genotype.empty())
+	if (!genotypeVector.empty())
 	{	
 	
 		std::cout << std::endl;
-		for (int ii = 0; ii < i_genotypeSize; ii++)
+		for (int ii = 0; ii < genotypeSize; ii++)
 		{
-			std::cout << genotype.at(ii) <<SPACE;
+			std::cout << genotypeVector.at(ii) <<SPACE;
 		}
 	}
 	
 }
 
-template <class T> void Individual<T>::vCalculateFittness(KnapsackProblem<T> * pcProblem)
+template <class T> void Individual<T>::calculateFittness(KnapsackProblem<T> *knapsackProblem)
 {	
-	d_fittness = pcProblem->dCalculateFitness(genotype);
+	fittness = knapsackProblem->calculateFitness(genotypeVector);
 	
 }
 
 
 
-template <class T> void Individual<T>::vTryToMutate()
+template <class T> void Individual<T>::tryToMutate()
 {
-	if (dGetRandomProbability() < d_mutationProbalility)
+	if (getRandomProbability() < mutationProbalility)
 	{
 		(*this)++;
 	}
 }
 
-template <> void Individual<bool>::vMutate()
+template <> void Individual<bool>::mutate()
 {		
 
-	for (int ii = 0; ii < genotype.size(); ii++)
+	for (int ii = 0; ii < genotypeVector.size(); ii++)
 	{
-		if (dGetRandomProbability() < d_mutationProbalility)
+		if (getRandomProbability() < mutationProbalility)
 		{
-			genotype.at(ii) = !genotype.at(ii);
+			genotypeVector.at(ii) = !genotypeVector.at(ii);
 		}
 	}
 	/*
@@ -144,7 +144,7 @@ template <> void Individual<bool>::vMutate()
 		if (i_firstCut == 0)i_firstCut++;
 		int i_secondCut = 0;
 		do {
-			i_secondCut = iGetCuttingPoint();
+			i_secondCut = getCuttingPoint();
 		} while (i_firstCut == i_secondCut || i_secondCut == 0);
 
 		if (i_secondCut < i_firstCut)
@@ -155,34 +155,34 @@ template <> void Individual<bool>::vMutate()
 		}
 		for (int ii = 0; ii <= (i_secondCut - i_firstCut) / 2; ii++)
 		{
-			std::swap(genotype.at(i_firstCut+ii), genotype.at(i_secondCut - ii));
+			std::swap(genotypeVector.at(i_firstCut+ii), genotypeVector.at(i_secondCut - ii));
 		}
 		*/
 }
-template <> void Individual<int>::vMutate()
+template <> void Individual<int>::mutate()
 {
-	for (int ii = 0; ii < genotype.size(); ii++)
+	for (int ii = 0; ii < genotypeVector.size(); ii++)
 	{	
-		if (dGetRandomProbability() < d_mutationProbalility)
+		if (getRandomProbability() < mutationProbalility)
 		{	
-			if (dGetRandomProbability() < d_mutationProbalility)
+			if (getRandomProbability() < mutationProbalility)
 			{
-				int d_howMany = v_itemsVector->at(ii).howManyCanGet();
+				int d_howMany = itemsVector->at(ii).howManyCanGet();
 				int d_mutationRange = d_howMany / 2;
 
 				std::uniform_int_distribution<> c_mutationValue(-d_mutationRange, d_mutationRange);
-				genotype.at(ii) = genotype.at(ii) + c_mutationValue(c_randomGenerator);
-				if (genotype.at(ii) > d_howMany)
+				genotypeVector.at(ii) = genotypeVector.at(ii) + c_mutationValue(randomGenerator);
+				if (genotypeVector.at(ii) > d_howMany)
 				{
-					genotype.at(ii) = d_howMany;
+					genotypeVector.at(ii) = d_howMany;
 				}
-				if (genotype.at(ii) < 0)
+				if (genotypeVector.at(ii) < 0)
 				{
-					genotype.at(ii) = 0;
+					genotypeVector.at(ii) = 0;
 				}
 
 			}
-			genotype.at(ii) = v_itemsVector->at(ii).howManyCanGet() - genotype.at(ii);
+			genotypeVector.at(ii) = itemsVector->at(ii).howManyCanGet() - genotypeVector.at(ii);
 		}
 	}
 	/*
@@ -190,7 +190,7 @@ template <> void Individual<int>::vMutate()
 	if (i_firstCut == 0)i_firstCut++;
 	int i_secondCut = 0;
 	do {
-		i_secondCut = iGetCuttingPoint();
+		i_secondCut = getCuttingPoint();
 	} while (i_firstCut == i_secondCut || i_secondCut == 0);
 
 	if (i_secondCut < i_firstCut)
@@ -201,28 +201,28 @@ template <> void Individual<int>::vMutate()
 	}
 	for (int ii = 0; ii <= (i_secondCut - i_firstCut) / 2; ii++)
 	{
-		std::swap(genotype.at(i_firstCut + ii), genotype.at(i_secondCut - ii));
+		std::swap(genotypeVector.at(i_firstCut + ii), genotypeVector.at(i_secondCut - ii));
 	}
 	*/
 }
-template <> void Individual<double>::vMutate()
+template <> void Individual<double>::mutate()
 {
-	for (int ii = 0; ii < genotype.size(); ii++)
+	for (int ii = 0; ii < genotypeVector.size(); ii++)
 	{
-		if (dGetRandomProbability() < d_mutationProbalility)
+		if (getRandomProbability() < mutationProbalility)
 		{	
-			double d_howMany = v_itemsVector->at(ii).howManyCanGet();
+			double d_howMany = itemsVector->at(ii).howManyCanGet();
 			double d_mutationRange = d_howMany/10.0;
 
 			std::uniform_real_distribution<> c_mutationValue(-d_mutationRange, d_mutationRange);
-			genotype.at(ii) = genotype.at(ii) + c_mutationValue(c_randomGenerator);
-			if (genotype.at(ii) > d_howMany)
+			genotypeVector.at(ii) = genotypeVector.at(ii) + c_mutationValue(randomGenerator);
+			if (genotypeVector.at(ii) > d_howMany)
 			{
-				genotype.at(ii) = d_howMany;
+				genotypeVector.at(ii) = d_howMany;
 			}
-			if (genotype.at(ii) < 0)
+			if (genotypeVector.at(ii) < 0)
 			{
-				genotype.at(ii) = 0;
+				genotypeVector.at(ii) = 0;
 			}
 			
 			
@@ -233,7 +233,7 @@ template <> void Individual<double>::vMutate()
 	if (i_firstCut == 0)i_firstCut++;
 	int i_secondCut = 0;
 	do {
-		i_secondCut = iGetCuttingPoint();
+		i_secondCut = getCuttingPoint();
 	} while (i_firstCut == i_secondCut || i_secondCut == 0);
 
 	if (i_secondCut < i_firstCut)
@@ -244,24 +244,24 @@ template <> void Individual<double>::vMutate()
 	}
 	for (int ii = 0; ii <= (i_secondCut - i_firstCut) / 2; ii++)
 	{
-		std::swap(genotype.at(i_firstCut + ii), genotype.at(i_secondCut - ii));
+		std::swap(genotypeVector.at(i_firstCut + ii), genotypeVector.at(i_secondCut - ii));
 	}
 	*/
 }
 
 
 
-template <class T> double Individual<T>::dGetFittness()
+template <class T> double Individual<T>::getFittness()
 {
-	return d_fittness;
+	return fittness;
 }
 
-template <class T> double Individual<T>::dGetRandomProbability()
+template <class T> double Individual<T>::getRandomProbability()
 {	
-	return c_realDistribution(c_randomGenerator);
+	return realDistribution(randomGenerator);
 }
 
-template <class T> int Individual<T> ::iGetCuttingPoint()
+template <class T> int Individual<T> ::getCuttingPoint()
 {
-	return c_intDistribution(c_randomGenerator);
+	return intDistribution(randomGenerator);
 }

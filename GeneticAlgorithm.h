@@ -10,34 +10,34 @@ class GeneticAlgorithm
 public:
 	GeneticAlgorithm();
 	~GeneticAlgorithm();
-	int iSetProperties(int iPopSize, double dCrossProb, double dMutProb, KnapsackProblem<T> * pcProblem);
-	int iRunFor(int iIterations);
-	Individual<T> * cGetBestIndividual();
-	Individual<T> * cGetBestFromAllPopulations();
-	double dGetRandomCrossProb();
-	void vDeletePopulation();
+	int setParameters(int iPopSize, double dCrossProb, double dMutProb, KnapsackProblem<T> *pcProblem);
+	int runFor(int iIterations);
+	Individual<T> * getBestIndividual();
+	Individual<T> * getBestFromAllPopulations();
+	double getRandomCrossProb();
+	void deletePopulation();
 	
 private:
-	void vCalculatePopulationFittness();
-	void vPerformCrossing();
-	void vPerformMutation();
-	void vRunIteration();
-	void vCreatePopulation();
-	void vSaveBestFromPopulation();
-	void vChooseParents(Individual<T>** pcParent1,Individual<T>** pcParent2);
-	void vCrossAndAdd(Individual<T>* pcParent1, Individual<T>* pcParent2,std::vector<Individual<T>*>* pvNewPopVec);
-	int iGetRandomIndividualNumber();
-	void vShowPopulation();
-	KnapsackProblem<T> * pc_problem;
-	std::vector<Individual<T>*>*  pv_populationVector;
-	int i_populationSize;
-	double d_crossingProbabilty;
-	double d_mutationProbability;
-	Individual<T>  * c_bestIndividual;
-	std::random_device c_randomDevice;
-	std::mt19937 c_randomGenerator;
-	std::uniform_int_distribution<> c_intDistribution;
-	std::uniform_real_distribution<> c_realDistribution;
+	void calculatePopulationFittness();
+	void performCrossing();
+	void performMutation();
+	void runIteration();
+	void createPopulation();
+	void saveBestFromPopulation();
+	void chooseParents(Individual<T> **pcParent1, Individual<T> **pcParent2);
+	void crossAndAdd(Individual<T> *pcParent1, Individual<T> *pcParent2, std::vector<Individual<T> *> *pvNewPopVec);
+	int getRandomIndividualNumber();
+	void showPopulation();
+	KnapsackProblem<T> * knapsackProblem;
+	std::vector<Individual<T>*>*  populationVector;
+	int populationSize;
+	double crossingProbabilty;
+	double mutationProbability;
+	Individual<T>  * bestIndividual;
+	std::random_device randomDevice;
+	std::mt19937 randomGenerator;
+	std::uniform_int_distribution<> intDistribution;
+	std::uniform_real_distribution<> realDistribution;
 	 
 
 	
